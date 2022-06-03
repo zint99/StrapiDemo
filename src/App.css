@@ -1,0 +1,17 @@
+.app {
+    width: 600px;
+    margin: 50px auto;
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+}
+
+td,
+th {
+    height: 50px;
+    width: 100px;
+    text-align: center;
+}
