@@ -11,9 +11,9 @@ function App() {
       try {
         //重置上次Error
         setError(null)
-        const dataJson = await fetch("http://localhost:1337/api/student")
-        const data = await dataJson.json()
-        if (data.ok) {
+        const res = await fetch("http://localhost:1337/api/student")
+        if (res.ok) {
+          const data = await res.json()
           setStudentList(data.data)
           setIsLoading(false)
         } else {
