@@ -1,0 +1,7 @@
+.StudentForm td {
+    border: 1px solid black;
+}
+
+.StudentForm td input {
+    width: 80px;
+}

@@ -1,16 +1,19 @@
 import React, { useState, useContext } from 'react'
 import studentContext from '../../../store/studentContext'
+import StudentForm from '../../StudentForm/StudentForm'
 
 export default function Student(props) {
     const { name, age, gender, address, id } = props
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [isError, setIsError] = useState(null)
+    const [isEdit, setIsEdit] = useState(false)
     const ctx = useContext(studentContext)
     const deleteButtonHandler = async () => {
         try {
-            setLoading(true)
+            setIsLoading(true)
+            setIsError(null)
             //删除数据
-            const res = await fetch(`http://localhost:1337/api/student/${id}`, {
+            const res = await fetch(`http://localhost:1337/api/students/${id}`, {
                 method: 'delete'
             })
             if (!res.ok) {
@@ -19,28 +22,40 @@ export default function Student(props) {
                 ctx.fetchData()
             }
         } catch (error) {
-            setError(error)
+            setIsError(error)
         } finally {
-            setLoading(false)
+            setIsLoading(false)
         }
+    }
+    const editButtonHandler = () => {
+        setIsEdit(preIsEdit => !preIsEdit)
     }
     return (
         <>
-            <tr>
-                <td>{name}</td>
-                <td>{gender}</td>
-                <td>{age}</td>
-                <td>{address}</td>
-                <td>
-                    <button onClick={deleteButtonHandler}>删除</button>
-                </td>
-            </tr>
-            {loading && <tr>
-                <td colSpan={5}>正在删除数据中...</td>
-            </tr>}
-            {error && <tr>
-                <td colSpan={5}>{error.message}</td>
-            </tr>}
+            {
+                isEdit ?
+                    <StudentForm {...props} isEdit={isEdit} editButtonHandler={editButtonHandler} />
+                    :
+                    (
+                        <>
+                            <tr>
+                                <td>{name}</td>
+                                <td>{gender}</td>
+                                <td>{age}</td>
+                                <td>{address}</td>
+                                <td>
+                                    <button onClick={deleteButtonHandler}>删除</button>
+                                    <button onClick={editButtonHandler}>修改</button>
+                                </td>
+                            </tr>
+                            {isLoading && <tr>
+                                <td colSpan={5}>正在删除数据中...</td>
+                            </tr>}
+                            {isError && <tr>
+                                <td colSpan={5}>{isError.message}</td>
+                            </tr>}
+                        </>
+                    )}
         </>
     )
 }

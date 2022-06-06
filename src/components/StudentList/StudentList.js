@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import studentContext from '../../store/studentContext'
+import StudentForm from '../StudentForm/StudentForm'
 import Student from './Student/Student'
 export default function StudentList(props) {
     const ctx = useContext(studentContext)
@@ -20,6 +21,9 @@ export default function StudentList(props) {
                 <tbody>
                     {props.stus.map((stu) => <Student key={stu.id} {...stu.attributes} id={stu.id} />)}
                 </tbody>
+                <tfoot>
+                    <StudentForm />
+                </tfoot>
             </table>
         </>
     )
