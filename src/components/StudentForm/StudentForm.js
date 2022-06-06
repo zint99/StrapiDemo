@@ -26,36 +26,54 @@ export default function StudentForm(props) {
         setUserData({ ...userData, gender: e.target.value })
     }
 
-    const { isError, isLoading, fetchData: addStu } = useFetch({
-        method: 'post',
-        url: 'students',
-        body: userData
-    }, () => {
-        setUserData({
-            name: '',
-            age: '',
-            gender: '',
-            address: ''
-        })
-        ctx.fetchData()
-    })
+    // const { isError, isLoading, fetchData: addStu } = useFetch({
+    //     method: 'post',
+    //     url: 'students',
+    // }, () => {
+    //     setUserData({
+    //         name: '',
+    //         age: '',
+    //         gender: '',
+    //         address: ''
+    //     })
+    //     ctx.fetchData()
+    // })
 
-    const { fetchData: editStu } = useFetch({
-        method: 'put',
-        url: `students/${props.id}`,
-        body: userData
+    // const { fetchData: editStu } = useFetch({
+    //     method: 'put',
+    //     url: `students/${props.id}`,
+    // }, () => {
+    //     alert("更新数据成功！")
+    //     props.editButtonHandler()
+    //     ctx.fetchData()
+    // })
+
+    const { isError, isLoading, fetchData: updateStu } = useFetch({
+        //由是否传入id来判断为添加还是更改数据
+        method: props.id ? 'put' : 'post',
+        url: props.id ? `students/${props.id}` : `students`
     }, () => {
-        alert("更新数据成功！")
-        props.editButtonHandler()
+        if (props.id) {
+            //执行更新数据的回调
+            alert("更新数据成功！")
+            props.editButtonHandler()
+        } else {
+            setUserData({
+                name: '',
+                age: '',
+                gender: '',
+                address: ''
+            })
+        }
         ctx.fetchData()
     })
 
     const addHandler = () => {
-        addStu(userData)
+        updateStu(userData)
     }
 
     const editHandler = () => {
-        editStu(userData)
+        updateStu(userData)
     }
 
     return (
@@ -81,7 +99,7 @@ export default function StudentForm(props) {
                 </td>
             </tr>
             {isLoading && <tr>
-                <td colSpan={5}>正在添加数据中...</td>
+                <td colSpan={5}>{props.id ? "正在卖力更新数据中！！" : "正在添加数据中..."}</td>
             </tr>}
             {isError && <tr>
                 <td colSpan={5}>{isError.message}</td>

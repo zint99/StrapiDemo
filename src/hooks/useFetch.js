@@ -1,11 +1,11 @@
 import { useState, useCallback } from 'react'
 
 export default function useFetch(reqObj, callback) {
-    const { method, url, body } = reqObj
+    const { method, url } = reqObj
     const [data, setData] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [isError, setIsError] = useState(null)
-    const fetchData = useCallback(async function (reqData = body) {
+    const fetchData = useCallback(async function (reqData) {
         try {
             //重置上次Error
             setIsError(null)
@@ -28,13 +28,10 @@ export default function useFetch(reqObj, callback) {
                 switch (method) {
                     case "get":
                         throw new Error('请求数据错误！')
-
                     case "delete":
                         throw new Error('删除数据错误！')
-
                     case "post":
                         throw new Error('添加数据错误！')
-
                     case "put":
                         throw new Error('更新数据错误！')
                     default:
