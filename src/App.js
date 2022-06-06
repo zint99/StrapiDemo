@@ -1,6 +1,6 @@
 import './App.css';
 import StudentList from './components/StudentList/StudentList';
-import { useState, useEffect, useCallback } from 'react'
+import { useEffect } from 'react'
 import studentContext from './store/studentContext'
 import useFetch from './hooks/useFetch';
 
@@ -10,7 +10,7 @@ function App() {
   })
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [fetchData])
   return (
     <studentContext.Provider value={{ fetchData }}>
       <div className='app'>
