@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useContext } from 'react'
+import useFetch from '../../hooks/useFetch'
 import studentContext from '../../store/studentContext'
 import './StudentForm.css'
 
@@ -10,8 +11,8 @@ export default function StudentForm(props) {
         address: props.address ? props.address : ''
     })
     const ctx = useContext(studentContext)
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(null)
+    // const [isLoading, setIsLoading] = useState(false)
+    // const [isError, setIsError] = useState(null)
     const nameChangeHandler = (e) => {
         setUserData({ ...userData, name: e.target.value })
     }
@@ -25,59 +26,38 @@ export default function StudentForm(props) {
         setUserData({ ...userData, gender: e.target.value })
     }
 
-    const addHandler = useCallback(async () => {
-        //useCallback记得添加依赖项
-        // console.log(userData)
-        console.log(userData)
-        try {
-            setLoading(true)
-            setError(null)
-            const res = await fetch("http://localhost:1337/api/students", {
-                method: 'post',
-                //转换为JSON格式
-                body: JSON.stringify({ data: userData }),
-                headers: {
-                    "Content-type": "application/json"
-                }
-            })
-            if (!res.ok) {
-                throw new Error("添加数据失败")
-            } else {
-                ctx.fetchData()
-            }
-        } catch (error) {
-            setError(error)
-        } finally {
-            setLoading(false)
-            setUserData({
-                name: '',
-                age: '',
-                gender: '',
-                address: ''
-            })
-        }
-    }, [userData])
-    const editHandler = async () => {
-        try {
-            const res = await fetch(`http://localhost:1337/api/students/${props.id}`, {
-                method: 'put',
-                //转换为JSON格式
-                body: JSON.stringify({ data: userData }),
-                headers: {
-                    "Content-type": "application/json"
-                }
-            })
-            if (!res.ok) {
-                throw new Error("更新数据失败")
-            } else {
-                alert("更新数据成功！")
-                props.editButtonHandler()
-                ctx.fetchData()
-            }
-        } catch (error) {
-            setError(error)
-        }
+    const { isError, isLoading, fetchData: addStu } = useFetch({
+        method: 'post',
+        url: 'students',
+        body: userData
+    }, () => {
+        setUserData({
+            name: '',
+            age: '',
+            gender: '',
+            address: ''
+        })
+        ctx.fetchData()
+    })
+
+    const { fetchData: editStu } = useFetch({
+        method: 'put',
+        url: `students/${props.id}`,
+        body: userData
+    }, () => {
+        alert("更新数据成功！")
+        props.editButtonHandler()
+        ctx.fetchData()
+    })
+
+    const addHandler = () => {
+        addStu(userData)
     }
+
+    const editHandler = () => {
+        editStu(userData)
+    }
+
     return (
         <>
             <tr className='StudentForm'>
@@ -100,11 +80,11 @@ export default function StudentForm(props) {
                         <button onClick={addHandler}>添加</button>}
                 </td>
             </tr>
-            {loading && <tr>
+            {isLoading && <tr>
                 <td colSpan={5}>正在添加数据中...</td>
             </tr>}
-            {error && <tr>
-                <td colSpan={5}>{error.message}</td>
+            {isError && <tr>
+                <td colSpan={5}>{isError.message}</td>
             </tr>}
         </>
     )

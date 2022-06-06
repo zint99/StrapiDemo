@@ -5,32 +5,12 @@ import studentContext from './store/studentContext'
 import useFetch from './hooks/useFetch';
 
 function App() {
-  const [studentList, setStudentList] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isError, setIsError] = useState(null)
-  const fetchData = useCallback(async function () {
-    try {
-      //重置上次Error
-      setIsError(null)
-      const res = await fetch("http://localhost:1337/api/students")
-      if (res.ok) {
-        const data = await res.json()
-        setStudentList(data.data)
-        setIsLoading(false)
-      } else {
-        throw new Error('数据请求错误！')
-      }
-    } catch (error) {
-      setIsError(error)
-    }
-  }, [])
-  // const { isLoading, isError, data: studentList, fetchData } = useFetch({
-  //   url: 'students'
-  // })
+  const { isLoading, isError, data: studentList, fetchData } = useFetch({
+    url: 'students'
+  })
   useEffect(() => {
     fetchData()
   }, [])
-
   return (
     <studentContext.Provider value={{ fetchData }}>
       <div className='app'>
@@ -39,7 +19,6 @@ function App() {
         {isError && <p>{'数据加载失败！' + isError.message}</p>}
       </div>
     </studentContext.Provider>
-
   );
 }
 
